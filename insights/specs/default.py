@@ -879,6 +879,15 @@ class DefaultSpecs(Specs):
     sap_hdb_version = foreach_execute(sap_sid, "/usr/bin/sudo -iu %sadm HDB version", keep_rc=True)
     sap_host_profile = simple_file("/usr/sap/hostctrl/exe/host_profile")
     sapcontrol_getsystemupdatelist = foreach_execute(sap_sid_num, "/usr/bin/sudo -iu %sadm sapcontrol -nr %s -function GetSystemUpdateList", keep_rc=True)
+
+    @datasource(Sap)
+    def sap_sid_name(broker):
+        """(list): Returns the list of (SAP SID, SAP InstanceName) """
+        sap = broker[Sap]
+        return [(sap.sid(i), i) for i in sap.local_instances]
+
+    sap_dev_disp = foreach_collect(sap_sid_name, "/usr/sap/%s/%s/work/dev_disp")
+    sap_dev_rd = foreach_collect(sap_sid_name, "/usr/sap/%s/%s/work/dev_rd")
     saphostctl_getcimobject_sapinstance = simple_command("/usr/sap/hostctrl/exe/saphostctrl -function GetCIMObject -enuminstances SAPInstance")
     saphostexec_status = simple_command("/usr/sap/hostctrl/exe/saphostexec -status")
     saphostexec_version = simple_command("/usr/sap/hostctrl/exe/saphostexec -version")

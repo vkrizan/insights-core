@@ -252,6 +252,8 @@ class InsightsArchiveSpecs(Specs):
     route = simple_file("insights_commands/route_-n")
     rpm_V_packages = first_file(["insights_commands/rpm_-V_coreutils_procps_procps-ng_shadow-utils_passwd_sudo_chrony", "insights_commands/rpm_-V_coreutils_procps_procps-ng_shadow-utils_passwd_sudo"])
     sapcontrol_getsystemupdatelist = simple_file("insights_commands/python_-m_insights.tools.cat_--no-header_sapcontrol_getsystemupdatelist")
+    sap_dev_disp = glob_file("/usr/sap/*/*/work/dev_disp")
+    sap_dev_rd = glob_file("/usr/sap/*/*/work/dev_rd")
     saphostctl_getcimobject_sapinstance = simple_file("insights_commands/usr.sap.hostctrl.exe.saphostctrl_-function_GetCIMObject_-enuminstances_SAPInstance")
     saphostexec_status = simple_file("insights_commands/usr.sap.hostctrl.exe.saphostexec_-status")
     saphostexec_version = simple_file("insights_commands/usr.sap.hostctrl.exe.saphostexec_-version")
