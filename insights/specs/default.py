@@ -471,6 +471,7 @@ class DefaultSpecs(Specs):
     init_ora = simple_file("${ORACLE_HOME}/dbs/init.ora")
     initscript = glob_file(r"etc/rc.d/init.d/*")
     initctl_lst = simple_command("/sbin/initctl --system list")
+    initscript = glob_file("/etc/rc.d/init.d/*")
     init_process_cgroup = simple_file("/proc/1/cgroup")
     interrupts = simple_file("/proc/interrupts")
     ip_addr = simple_command("/sbin/ip addr")
