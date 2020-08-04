@@ -423,6 +423,10 @@ DEFAULT_OPTS = {
         'const': True,
         'nargs': '?',
         'group': 'platform'
+    },
+    'new_prod_cluster': {
+        # non-CLI
+        'default': False
     }
 }
 
