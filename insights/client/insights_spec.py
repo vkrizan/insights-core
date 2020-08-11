@@ -9,7 +9,7 @@ from tempfile import NamedTemporaryFile
 from insights.util import mangle
 
 from .constants import InsightsConstants as constants
-from .utilities import determine_hostname
+from .utilities import determine_hostname, generate_machine_id
 
 logger = logging.getLogger(__name__)
 
@@ -127,6 +127,10 @@ class InsightsFile(InsightsSpec):
         '''
         if not os.path.isfile(self.real_path):
             logger.debug('File %s does not exist', self.real_path)
+            return
+
+        if 'machine-id' in self.real_path and 'insights' in self.real_path:
+            # add this in archive metadata instead
             return
 
         sedcmd = Popen(['sed', '', self.real_path], stdout=PIPE)
