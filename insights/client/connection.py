@@ -1018,8 +1018,9 @@ class InsightsConnection(object):
         if remediation_id:
             # validate this?
             params['remediation'] = remediation_id
-        res = self.session.get(diag_url, params=params)
+        res = self.get(diag_url, params=params)
         if not res:
+            # consider logging the HTTP response text to ERROR
             logger.error('Unable to get diagnosis data.')
             return None
         return res.json()

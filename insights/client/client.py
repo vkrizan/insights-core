@@ -310,7 +310,6 @@ def get_connection(config):
 
 def _legacy_upload(config, pconn, tar_file, content_type, collection_duration=None):
     logger.info('Uploading Insights data.')
-    api_response = None
     for tries in range(config.retries):
         try:
             upload = pconn.upload_archive(tar_file, '', collection_duration)
@@ -320,7 +319,9 @@ def _legacy_upload(config, pconn, tar_file, content_type, collection_duration=No
         except (PayloadTooLargeException, UnregisteredException):
             raise RuntimeError('Upload failed.')
 
-        if not upload:
+        if upload:
+            break
+        else:
             logger.error("Upload attempt %d of %d failed! Status Code: %s",
                          tries + 1, config.retries, upload.status_code)
             if tries + 1 != config.retries:
@@ -332,27 +333,26 @@ def _legacy_upload(config, pconn, tar_file, content_type, collection_duration=No
                 logger.error("Please see %s for additional information", config.logging_file)
                 raise RuntimeError('Upload failed.')
 
-        api_response = json.loads(upload.text)
+    api_response = json.loads(upload.text)
 
-        # Write to last upload file
-        with open(constants.last_upload_results_file, 'w') as handler:
-            if six.PY3:
-                handler.write(upload.text)
-            else:
-                handler.write(upload.text.encode('utf-8'))
-        write_to_disk(constants.lastupload_file)
-
-        msg_name = determine_hostname(config.display_name)
-        account_number = config.account_number
-        if account_number:
-            logger.info("Successfully uploaded report from %s to account %s.",
-                        msg_name, account_number)
+    # Write to last upload file
+    with open(constants.last_upload_results_file, 'w') as handler:
+        if six.PY3:
+            handler.write(upload.text)
         else:
-            logger.info("Successfully uploaded report for %s.", msg_name)
-        if config.register:
-            # direct to console after register + upload
-            logger.info('View the Red Hat Insights console at https://cloud.redhat.com/insights/')
-        break
+            handler.write(upload.text.encode('utf-8'))
+    write_to_disk(constants.lastupload_file)
+
+    msg_name = determine_hostname(config.display_name)
+    account_number = config.account_number
+    if account_number:
+        logger.info("Successfully uploaded report from %s to account %s.",
+                    msg_name, account_number)
+    else:
+        logger.info("Successfully uploaded report for %s.", msg_name)
+    if config.register:
+        # direct to console after register + upload
+        logger.info('View the Red Hat Insights console at https://cloud.redhat.com/insights/')
 
     return api_response
 
@@ -370,7 +370,9 @@ def upload(config, pconn, tar_file, content_type, collection_duration=None):
         except (PayloadTooLargeException, InvalidContentTypeException):
             raise RuntimeError('Upload failed.')
 
-        if not upload:
+        if upload:
+            break
+        else:
             logger.error("Upload attempt %d of %d failed! Status code: %s",
                          tries + 1, config.retries, upload.status_code)
             if tries + 1 != config.retries:
@@ -382,10 +384,10 @@ def upload(config, pconn, tar_file, content_type, collection_duration=None):
                 logger.error("Please see %s for additional information", config.logging_file)
                 raise RuntimeError('Upload failed.')
 
-        write_to_disk(constants.lastupload_file)
-        msg_name = determine_hostname(config.display_name)
-        logger.info("Successfully uploaded report for %s.", msg_name)
-        if config.register:
-            # direct to console after register + upload
-            logger.info('View the Red Hat Insights console at https://cloud.redhat.com/insights/')
-        return
+    write_to_disk(constants.lastupload_file)
+    msg_name = determine_hostname(config.display_name)
+    logger.info("Successfully uploaded report for %s.", msg_name)
+    if config.register:
+        # direct to console after register + upload
+        logger.info('View the Red Hat Insights console at https://cloud.redhat.com/insights/')
+    return
