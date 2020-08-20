@@ -7,7 +7,6 @@ import requests
 import os
 import six
 import json
-import time
 import logging
 import platform
 import xml.etree.ElementTree as ET
@@ -27,8 +26,7 @@ except ImportError:
 from .utilities import (determine_hostname,
                         generate_machine_id,
                         write_unregistered_file,
-                        write_registered_file,
-                        write_to_disk)
+                        write_registered_file)
 from .cert_auth import rhsmCertificate
 from .constants import InsightsConstants as constants
 from .url_cache import URLCache
@@ -660,10 +658,10 @@ class InsightsConnection(object):
             api_group_id = post_group.json()['id']
 
         data = json.dumps(systems)
-        put_group = self.put(group_path +
-                             ('/%s/systems' % api_group_id),
-                             headers=headers,
-                             data=data)
+        self.put(group_path +
+                 ('/%s/systems' % api_group_id),
+                 headers=headers,
+                 data=data)
 
     # -LEGACY-
     def do_group(self):
@@ -774,7 +772,6 @@ class InsightsConnection(object):
         logger.debug("Unregistering %s", machine_id)
         url = self.api_url + "/v1/systems/" + machine_id
         if not self.delete(url):
-            logger.debug(e)
             logger.error("Could not unregister this system")
             return False
         logger.info(

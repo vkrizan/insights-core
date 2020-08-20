@@ -1,4 +1,3 @@
-import json
 import requests
 from insights.client import InsightsClient
 from insights.client.config import InsightsConfig
@@ -9,7 +8,7 @@ TEST_REMEDIATION_ID = 'xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx'
 TEST_MACHINE_ID = 'yyyyyyyy-yyyy-yyyy-yyyy-yyyyyyyyyyyy'
 
 
-@patch('insights.client.connection.InsightsConnection._init_session',  Mock())
+@patch('insights.client.connection.InsightsConnection._init_session', Mock())
 @patch('insights.client.connection.InsightsConnection.get_proxies', Mock())
 @patch('insights.client.connection.generate_machine_id', Mock(return_value=TEST_MACHINE_ID))
 def test_get_diagnosis():
@@ -42,7 +41,7 @@ def test_get_diagnosis():
     c.get.assert_called_with('https://' + conf.base_url + '/remediations/v1/diagnosis/' + TEST_MACHINE_ID, params={})
 
 
-@patch('insights.client.connection.InsightsConnection._init_session',  Mock())
+@patch('insights.client.connection.InsightsConnection._init_session', Mock())
 @patch('insights.client.connection.InsightsConnection.get_proxies', Mock())
 @patch('insights.client.connection.generate_machine_id', Mock(return_value=TEST_MACHINE_ID))
 def test_get_diagnosis_with_id():
