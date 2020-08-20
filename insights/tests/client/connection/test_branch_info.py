@@ -18,4 +18,3 @@ def test_request(get, dumps):
 
     get.assert_called_once_with(config.branch_info_url)
     dumps.assert_called_once_with(get.return_value.json.return_value)
- 
