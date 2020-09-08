@@ -4,7 +4,9 @@ EngineDBQuery - command ``engine-db-query --statement "<DB_QUERY>" --json``
 
 Parses the output of the command `engine-db-query` returned in JSON format.
 """
+import json
 from insights.core import CommandParser, JSONParser
+from insights.parsers import ParseException, SkipException
 from insights.core.plugins import parser
 from insights.specs import Specs
 
@@ -14,7 +16,7 @@ class EngineDBQueryVDSMversion(CommandParser, JSONParser):
     """
     Get the hostname & vdsm package version along with host info.
 
-    Class for parsing the output of the command - ``engine-db-query --statement "SELECT vs.vds_name, rpm_version FROM vds_dynamic vd, vds_static vs WHERE vd.vds_id = vs.vds_id;" --json``.
+    Class for parsing the output of the command - ``engine-db-query --statement "SELECT vs.vds_name, rpm_version FROM vds_dynamic vd, vds_static vs WHERE vd.vds_id = vs.vds_id" --json``.
 
     Attributes:
         data (dict): Host info.
@@ -44,6 +46,14 @@ class EngineDBQueryVDSMversion(CommandParser, JSONParser):
         >>> output.result == [{'vds_name': 'hosto', 'rpm_version': 'vdsm-4.30.40-1.el7ev'}]
         True
     """
+    def parse_content(self, content):
+        if not content:
+            raise SkipException("Empty output.")
+        try:
+            self.data = json.loads(''.join(content))
+        except:
+            raise ParseException("Could not parse json.", ''.join(content))
+
     @property
     def result(self):
         """Get the value of 'result'."""
