@@ -586,11 +586,11 @@ class InsightsConfig(object):
         parsedconfig = ConfigParser.RawConfigParser()
         try:
             parsedconfig.read(fname or self.conf)
-        except ConfigParser.Error:
+        except ConfigParser.Error as e:
             if self._print_errors:
                 sys.stdout.write(
-                    'ERROR: Could not read configuration file, '
-                    'using defaults\n')
+                    'ERROR: {0}.\nCould not read configuration file, '
+                    'using defaults\n'.format(e))
             return
         try:
             if parsedconfig.has_section(constants.app_name):
@@ -599,11 +599,11 @@ class InsightsConfig(object):
                 d = dict(parsedconfig.items('redhat-access-insights'))
             else:
                 raise ConfigParser.Error
-        except ConfigParser.Error:
+        except ConfigParser.Error as e:
             if self._print_errors:
                 sys.stdout.write(
-                    'ERROR: Could not read configuration file, '
-                    'using defaults\n')
+                    'ERROR: {0}.\nCould not read configuration file, '
+                    'using defaults\n'.format(e))
             return
         for key in d:
             try:
